@@ -9,12 +9,12 @@ st.markdown("<p style='text-align:center;'>Please forgive me, my love 💖</p>",
 
 messages = [
     "Even if you press NO, my heart says YES to your forgiveness 💞",
-    "System error: You cannot say no to this much cuteness 😢",
+    "System error: A woman of this much beauty can exist you know (am telling the truth and not butter you up :P)",
     "Forgiveness.exe has started running… please wait ⏳",
     "Warning ⚠️: Refusing forgiveness may cause excessive husband sadness.",
     "I already deleted my ego folder… can we start fresh? 🥺",
-    "I made a mistake, but loving you wasn’t one of them 💌",
-    "Click OK — and let’s order your favorite dessert 🍰",
+    "I made a mistake, can i prove it with a biscoff cake",
+    "Click OK - you might even get a kissi",
 ]
 
 placeholder = st.empty()
