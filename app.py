@@ -2,17 +2,28 @@ import streamlit as st
 import random
 import time
 from datetime import datetime
+import os
 
 st.set_page_config(page_title="Sorry ❤️", page_icon="💔", layout="centered")
 
-# -------------------------
-# INIT SESSION STATE
-# -------------------------
-if "log" not in st.session_state:
-    st.session_state.log = []
+LOG_FILE = "click_log.txt"  # shared log file
 
 # -------------------------
-# MESSAGES
+# helper functions for shared log
+# -------------------------
+def append_log(entry: str):
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(entry + "\n")
+
+def read_log():
+    if not os.path.exists(LOG_FILE):
+        return []
+    with open(LOG_FILE, "r", encoding="utf-8") as f:
+        lines = [line.strip() for line in f.readlines() if line.strip()]
+    return lines
+
+# -------------------------
+# messages
 # -------------------------
 messages = [
     "Even if you press NO, my heart says YES to your forgiveness 💞",
@@ -25,7 +36,7 @@ messages = [
 ]
 
 # -------------------------
-# HEADER
+# header
 # -------------------------
 st.markdown("<h1 style='text-align:center; color:#ff4b4b;'>🥺 I'm Really Sorry...</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center;'>Please forgive me my love ❤️</p>", unsafe_allow_html=True)
@@ -33,7 +44,7 @@ st.markdown("<p style='text-align:center;'>Please forgive me my love ❤️</p>"
 placeholder = st.empty()
 
 # -------------------------
-# MAIN BUTTONS
+# main buttons
 # -------------------------
 with placeholder.container():
     c1, c2 = st.columns(2)
@@ -41,26 +52,29 @@ with placeholder.container():
     no = c2.button("💔 No")
 
 # -------------------------
-# BUTTON LOGIC
+# button logic (writes to shared file)
 # -------------------------
 if ok or no:
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if ok:
-        st.session_state.log.append(f"{now} — YES clicked ❤️")
+        append_log(f"{now} — YES clicked ❤️")
         st.balloons()
     else:
-        st.session_state.log.append(f"{now} — NO clicked 💔")
+        append_log(f"{now} — NO clicked 💔")
 
     msg = random.choice(messages)
 
     with placeholder.container():
-        st.markdown(f"<h3 style='text-align:center; color:#ff69b4;'>{msg}</h3>", unsafe_allow_html=True)
+        st.markdown(
+            f"<h3 style='text-align:center; color:#ff69b4;'>{msg}</h3>",
+            unsafe_allow_html=True
+        )
         time.sleep(1.2)
     st.rerun()
 
 # -----------------------------------------------------------
-# ❤️ SECRET WORD CHECK
+# ❤️ secret word section
 # -----------------------------------------------------------
 st.markdown("---")
 st.subheader("💗 A tiny question just for you...")
@@ -76,24 +90,25 @@ if secret_input:
             "<h3 style='text-align:center; color:#ff1493;'>I love you the most in the entire world ❤️</h3>",
             unsafe_allow_html=True
         )
-
-        # Show image
-        st.image("photo.jpg", use_container_width=True)  
-        # ↑ Upload photo.jpg in your repo
-
+        # safe image handling
+        if os.path.exists("photo.jpg"):
+            st.image("photo.jpg", use_container_width=True)
+        else:
+            st.warning("(Psst… upload photo.jpg to the repo so I can show our picture 😇)")
     else:
         st.error("Hmm… that's not the word 😅 Try again my love 💛")
 
 # -----------------------------------------------------------
-# 📜 ALWAYS SHOW LOG (No admin protection)
+# 📜 shared click log (visible on all devices)
 # -----------------------------------------------------------
 st.markdown("---")
-st.subheader("📜 Click Log (for me to see)")
+st.subheader("📜 Click Log")
 
-if len(st.session_state.log) == 0:
+log_lines = read_log()
+if not log_lines:
     st.info("No clicks recorded yet.")
 else:
-    for entry in reversed(st.session_state.log):
+    for entry in reversed(log_lines):
         st.write("•", entry)
 
-st.caption("Made with ❤️ & infinite apologies.")
+st.caption("Made with ❤️, infinite retries, and shared logs.")
