@@ -5,10 +5,19 @@ from datetime import datetime
 
 st.set_page_config(page_title="Sorry ❤️", page_icon="💔", layout="centered")
 
-st.markdown("<h1 style='text-align:center; color:#ff4b4b;'>🥺 I'm Really Sorry...</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center;'>Please forgive me, my love 💖</p>", unsafe_allow_html=True)
+# -------------------------
+# INIT SESSION STATE
+# -------------------------
+if "log" not in st.session_state:
+    st.session_state.log = []
 
-# --- Messages ---
+if "admin_mode" not in st.session_state:
+    st.session_state.admin_mode = False  # stays True after verification
+
+
+# -------------------------
+# MESSAGES
+# -------------------------
 messages = [
     "Even if you press NO, my heart says YES to your forgiveness 💞",
     "System error: A woman of this much beauty can exist you know 😍 (not buttering you up :P)",
@@ -19,25 +28,20 @@ messages = [
     "Click OK - you might even get a kissi 😘",
 ]
 
-# -------------------------
-# INIT SESSION STATES
-# -------------------------
-if "log" not in st.session_state:
-    st.session_state.log = []
+st.markdown("<h1 style='text-align:center; color:#ff4b4b;'>🥺 I'm Really Sorry...</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;'>Please forgive me, my love 💖</p>", unsafe_allow_html=True)
 
-if "admin_mode" not in st.session_state:
-    st.session_state.admin_mode = False  # stays TRUE after login
-
-# --- UI ---
 placeholder = st.empty()
 
+
+# -------------------------
+# MAIN UI
+# -------------------------
 with placeholder.container():
     st.write("Will you forgive me? 🙏")
     c1, c2 = st.columns(2)
-    with c1:
-        ok = st.button("❤️ OK")
-    with c2:
-        no = st.button("💔 No")
+    ok = c1.button("❤️ OK")
+    no = c2.button("💔 No")
 
 
 # -------------------------
@@ -45,51 +49,45 @@ with placeholder.container():
 # -------------------------
 if ok or no:
     msg = random.choice(messages)
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if ok:
-        st.session_state.log.append(
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} — She clicked YES ❤️"
-        )
+        st.session_state.log.append(f"{now} — She clicked YES ❤️")
         st.balloons()
-        st.toast("Yay! Infinite forgiveness loop activated 😅", icon="🎉")
     else:
-        st.session_state.log.append(
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} — She clicked NO 💔"
-        )
-        st.toast("Hmm… trying again with extra cuteness…", icon="🥺")
+        st.session_state.log.append(f"{now} — She clicked NO 💔")
 
     with placeholder.container():
-        st.markdown(
-            f"<h3 style='text-align:center; color:#ff69b4;'>{msg}</h3>",
-            unsafe_allow_html=True
-        )
-        time.sleep(1)
+        st.markdown(f"<h3 style='text-align:center; color:#ff69b4;'>{msg}</h3>", unsafe_allow_html=True)
+        time.sleep(1.2)
     st.rerun()
 
 
 # -------------------------
-# ADMIN PANEL (RELIABLE VERSION)
+# ADMIN SYSTEM (MOBILE SAFE)
 # -------------------------
+
 st.markdown("---")
 st.subheader("🔧 Admin Access")
 
-# If admin already verified → show log directly
+# Already authenticated → immediately show logs
 if st.session_state.admin_mode:
 
     st.success("Admin Mode Active ✔")
     st.markdown("### 📜 Click Log")
 
     if len(st.session_state.log) == 0:
-        st.info("No clicks recorded yet.")
+        st.info("No clicks yet.")
     else:
+        # Always show logs, no collapsing
         for entry in reversed(st.session_state.log):
             st.write("•", entry)
 
 else:
-    # Ask for password only if admin NOT in session
-    pwd = st.text_input("Enter Admin Password:", type="password")
+    # If NOT authenticated, show password box
+    pwd = st.text_input("Enter admin password:", type="password")
 
-    if pwd == "harishlove":
+    if pwd == "harishlove":       # <-- change to your desired password
         st.session_state.admin_mode = True
         st.rerun()
     elif pwd != "":
