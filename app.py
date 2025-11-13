@@ -67,7 +67,7 @@ st.subheader("💗 A tiny question just for you...")
 
 secret_input = st.text_input("Enter the word only you and I know 😘:")
 
-SECRET_WORD = "mango"  # <<---- change this to your real secret word
+SECRET_WORD = "Iniya"  # <<---- change this to your real secret word
 
 if secret_input:
     if secret_input.strip().lower() == SECRET_WORD.lower():
