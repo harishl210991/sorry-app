@@ -5,19 +5,11 @@ from datetime import datetime
 
 st.set_page_config(page_title="Sorry ❤️", page_icon="💔", layout="centered")
 
-# -------------------------
-# INIT SESSION STATE
-# -------------------------
+# Init log
 if "log" not in st.session_state:
     st.session_state.log = []
 
-if "admin_mode" not in st.session_state:
-    st.session_state.admin_mode = False  # stays True after verification
-
-
-# -------------------------
-# MESSAGES
-# -------------------------
+# Apology messages
 messages = [
     "Even if you press NO, my heart says YES to your forgiveness 💞",
     "System error: A woman of this much beauty can exist you know 😍 (not buttering you up :P)",
@@ -28,69 +20,40 @@ messages = [
     "Click OK - you might even get a kissi 😘",
 ]
 
-st.markdown("<h1 style='text-align:center; color:#ff4b4b;'>🥺 I'm Really Sorry...</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center;'>Please forgive me, my love 💖</p>", unsafe_allow_html=True)
+st.title("🥺 I'm Really Sorry...")
+st.write("Please forgive me ❤️")
 
 placeholder = st.empty()
 
-
-# -------------------------
-# MAIN UI
-# -------------------------
+# Main buttons
 with placeholder.container():
-    st.write("Will you forgive me? 🙏")
-    c1, c2 = st.columns(2)
-    ok = c1.button("❤️ OK")
-    no = c2.button("💔 No")
+    col1, col2 = st.columns(2)
+    ok = col1.button("❤️ OK")
+    no = col2.button("💔 No")
 
-
-# -------------------------
-# BUTTON LOGIC
-# -------------------------
+# Button logic
 if ok or no:
-    msg = random.choice(messages)
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if ok:
-        st.session_state.log.append(f"{now} — She clicked YES ❤️")
+        st.session_state.log.append(f"{now} — YES clicked ❤️")
         st.balloons()
     else:
-        st.session_state.log.append(f"{now} — She clicked NO 💔")
+        st.session_state.log.append(f"{now} — NO clicked 💔")
 
+    msg = random.choice(messages)
     with placeholder.container():
         st.markdown(f"<h3 style='text-align:center; color:#ff69b4;'>{msg}</h3>", unsafe_allow_html=True)
         time.sleep(1.2)
+
     st.rerun()
 
-
-# -------------------------
-# ADMIN SYSTEM (MOBILE SAFE)
-# -------------------------
-
+# FORCE SHOW THE LOG ALWAYS
 st.markdown("---")
-st.subheader("🔧 Admin Access")
+st.subheader("📜 DEBUG LOG (Should ALWAYS be visible)")
 
-# Already authenticated → immediately show logs
-if st.session_state.admin_mode:
-
-    st.success("Admin Mode Active ✔")
-    st.markdown("### 📜 Click Log")
-
-    if len(st.session_state.log) == 0:
-        st.info("No clicks yet.")
-    else:
-        # Always show logs, no collapsing
-        for entry in reversed(st.session_state.log):
-            st.write("•", entry)
-
+if len(st.session_state.log) == 0:
+    st.write("No clicks recorded yet.")
 else:
-    # If NOT authenticated, show password box
-    pwd = st.text_input("Enter admin password:", type="password")
-
-    if pwd == "harishlove":       # <-- change to your desired password
-        st.session_state.admin_mode = True
-        st.rerun()
-    elif pwd != "":
-        st.error("Wrong password ❌")
-
-st.caption("Made with ❤️ & admin superpowers.")
+    for entry in reversed(st.session_state.log):
+        st.write("•", entry)
