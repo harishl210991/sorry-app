@@ -16,13 +16,6 @@ def append_log(entry: str):
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(entry + "\n")
 
-def read_log():
-    if not os.path.exists(LOG_FILE):
-        return []
-    with open(LOG_FILE, "r", encoding="utf-8") as f:
-        lines = [line.strip() for line in f.readlines() if line.strip()]
-    return lines
-
 # -------------------------
 # Messages
 # -------------------------
@@ -46,7 +39,7 @@ st.markdown("<p style='text-align:center;'>Please forgive me my love ❤️</p>"
 # Ask for initials
 # -------------------------
 st.markdown("### 💛 Before we continue…")
-initials = st.text_input("Enter your initials (like D/DK/DH/HD):")
+initials = st.text_input("Enter your initials (like D/DH/HD/DK):")
 
 if not initials:
     st.warning("Please enter your initials above before clicking anything ❤️")
@@ -112,18 +105,4 @@ if secret_input:
     else:
         st.error("Hmm… that's not the word 😅 Try again my love 💛")
 
-# -----------------------------------------------------------
-# 📜 Shared click log (visible everywhere)
-# -----------------------------------------------------------
-st.markdown("---")
-st.subheader("📜 Click Log")
-
-log_lines = read_log()
-
-if not log_lines:
-    st.info("No clicks recorded yet.")
-else:
-    for entry in reversed(log_lines):
-        st.write(entry)
-
-st.caption("Made with ❤️, initials, IST time, and honest apologies.")
+st.caption("Made with ❤️, hidden logs, IST time, and honest apologies.")
