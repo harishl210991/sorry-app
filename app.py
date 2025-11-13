@@ -6,21 +6,14 @@ from datetime import datetime
 st.set_page_config(page_title="Sorry ❤️", page_icon="💔", layout="centered")
 
 # -------------------------
-# INIT SESSION STATES
+# INIT SESSION STATE
 # -------------------------
 if "log" not in st.session_state:
     st.session_state.log = []
 
-if "admin_mode" not in st.session_state:
-    st.session_state.admin_mode = False  # True after correct password
-
-
 # -------------------------
-# MAIN UI
+# MESSAGES
 # -------------------------
-st.title("🥺 I'm Really Sorry...")
-st.write("Please forgive me my love ❤️")
-
 messages = [
     "Even if you press NO, my heart says YES to your forgiveness 💞",
     "System error: A woman of this much beauty can exist you know 😍 (not buttering you up :P)",
@@ -31,16 +24,24 @@ messages = [
     "Click OK - you might even get a kissi 😘",
 ]
 
+# -------------------------
+# HEADER
+# -------------------------
+st.markdown("<h1 style='text-align:center; color:#ff4b4b;'>🥺 I'm Really Sorry...</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;'>Please forgive me my love ❤️</p>", unsafe_allow_html=True)
+
 placeholder = st.empty()
 
+# -------------------------
+# MAIN BUTTONS
+# -------------------------
 with placeholder.container():
     c1, c2 = st.columns(2)
     ok = c1.button("❤️ OK")
     no = c2.button("💔 No")
 
-
 # -------------------------
-# BUTTON HANDLING
+# BUTTON LOGIC
 # -------------------------
 if ok or no:
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -56,36 +57,43 @@ if ok or no:
     with placeholder.container():
         st.markdown(f"<h3 style='text-align:center; color:#ff69b4;'>{msg}</h3>", unsafe_allow_html=True)
         time.sleep(1.2)
-
     st.rerun()
 
-
-# -------------------------
-# ADMIN PANEL (SAFE + SIMPLE)
-# -------------------------
+# -----------------------------------------------------------
+# ❤️ SECRET WORD CHECK
+# -----------------------------------------------------------
 st.markdown("---")
-st.subheader("🔧 Admin Access")
+st.subheader("💗 A tiny question just for you...")
 
-# If admin already authenticated, show log directly
-if st.session_state.admin_mode:
+secret_input = st.text_input("Enter the word only you and I know 😘:")
 
-    st.success("Admin Mode Active ✔")
-    st.markdown("### 📜 Click Log (Private)")
+SECRET_WORD = "mango"  # <<---- change this to your real secret word
 
-    if len(st.session_state.log) == 0:
-        st.info("No clicks yet.")
+if secret_input:
+    if secret_input.strip().lower() == SECRET_WORD.lower():
+        st.success("💖 That's the one! 💖")
+        st.markdown(
+            "<h3 style='text-align:center; color:#ff1493;'>I love you the most in the entire world ❤️</h3>",
+            unsafe_allow_html=True
+        )
+
+        # Show image
+        st.image("photo.jpg", use_container_width=True)  
+        # ↑ Upload photo.jpg in your repo
+
     else:
-        for entry in reversed(st.session_state.log):
-            st.write("•", entry)
+        st.error("Hmm… that's not the word 😅 Try again my love 💛")
 
+# -----------------------------------------------------------
+# 📜 ALWAYS SHOW LOG (No admin protection)
+# -----------------------------------------------------------
+st.markdown("---")
+st.subheader("📜 Click Log (for me to see)")
+
+if len(st.session_state.log) == 0:
+    st.info("No clicks recorded yet.")
 else:
-    # Ask for password
-    pwd = st.text_input("Enter Admin Password:", type="password")
+    for entry in reversed(st.session_state.log):
+        st.write("•", entry)
 
-    if pwd == "harishlove":  # <<--------- change password here
-        st.session_state.admin_mode = True
-        st.rerun()  # refresh to show log
-    elif pwd != "":
-        st.error("Wrong password ❌")
-
-st.caption("Made with ❤️ & admin superpowers.")
+st.caption("Made with ❤️ & infinite apologies.")
