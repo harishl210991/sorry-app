@@ -46,7 +46,7 @@ st.markdown("<p style='text-align:center;'>Please forgive me my love ❤️</p>"
 # Ask for initials
 # -------------------------
 st.markdown("### 💛 Before we continue…")
-initials = st.text_input("Enter your initials (like N / SN):")
+initials = st.text_input("Enter your initials (like D/DK/DH/HD):")
 
 if not initials:
     st.warning("Please enter your initials above before clicking anything ❤️")
