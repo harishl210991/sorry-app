@@ -2,14 +2,15 @@ import streamlit as st
 import random
 import time
 from datetime import datetime
+from zoneinfo import ZoneInfo   # For India timezone
 import os
 
 st.set_page_config(page_title="Sorry ❤️", page_icon="💔", layout="centered")
 
-LOG_FILE = "click_log.txt"  # shared log file
+LOG_FILE = "click_log.txt"  # shared log across all devices
 
 # -------------------------
-# helper functions for shared log
+# Helper functions for shared file-based log
 # -------------------------
 def append_log(entry: str):
     with open(LOG_FILE, "a", encoding="utf-8") as f:
@@ -23,7 +24,7 @@ def read_log():
     return lines
 
 # -------------------------
-# messages
+# Messages
 # -------------------------
 messages = [
     "Even if you press NO, my heart says YES to your forgiveness 💞",
@@ -36,15 +37,26 @@ messages = [
 ]
 
 # -------------------------
-# header
+# Header
 # -------------------------
 st.markdown("<h1 style='text-align:center; color:#ff4b4b;'>🥺 I'm Really Sorry...</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center;'>Please forgive me my love ❤️</p>", unsafe_allow_html=True)
 
+# -------------------------
+# Ask for initials
+# -------------------------
+st.markdown("### 💛 Before we continue…")
+initials = st.text_input("Enter your initials (like N / SN):")
+
+if not initials:
+    st.warning("Please enter your initials above before clicking anything ❤️")
+else:
+    initials = initials.strip().upper()
+
 placeholder = st.empty()
 
 # -------------------------
-# main buttons
+# Main buttons
 # -------------------------
 with placeholder.container():
     c1, c2 = st.columns(2)
@@ -52,16 +64,17 @@ with placeholder.container():
     no = c2.button("💔 No")
 
 # -------------------------
-# button logic (writes to shared file)
+# Button logic (writes initials + IST timestamp)
 # -------------------------
-if ok or no:
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+if initials and (ok or no):
+    # India timezone time
+    now = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d %H:%M:%S")
 
     if ok:
-        append_log(f"{now} — YES clicked ❤️")
+        append_log(f"• {initials} — {now} — YES ❤️")
         st.balloons()
     else:
-        append_log(f"{now} — NO clicked 💔")
+        append_log(f"• {initials} — {now} — NO 💔")
 
     msg = random.choice(messages)
 
@@ -74,7 +87,7 @@ if ok or no:
     st.rerun()
 
 # -----------------------------------------------------------
-# ❤️ secret word section
+# ❤️ Secret word section
 # -----------------------------------------------------------
 st.markdown("---")
 st.subheader("💗 A tiny question just for you...")
@@ -90,25 +103,27 @@ if secret_input:
             "<h3 style='text-align:center; color:#ff1493;'>I love you the most in the entire world ❤️</h3>",
             unsafe_allow_html=True
         )
-        # safe image handling
+
+        # Show image safely
         if os.path.exists("photo.jpg"):
             st.image("photo.jpg", use_container_width=True)
         else:
-            st.warning("(Psst… upload photo.jpg to the repo so I can show our picture 😇)")
+            st.warning("(Upload 'photo.jpg' to your repo to display the picture 😇)")
     else:
         st.error("Hmm… that's not the word 😅 Try again my love 💛")
 
 # -----------------------------------------------------------
-# 📜 shared click log (visible on all devices)
+# 📜 Shared click log (visible everywhere)
 # -----------------------------------------------------------
 st.markdown("---")
 st.subheader("📜 Click Log")
 
 log_lines = read_log()
+
 if not log_lines:
     st.info("No clicks recorded yet.")
 else:
     for entry in reversed(log_lines):
-        st.write("•", entry)
+        st.write(entry)
 
-st.caption("Made with ❤️, infinite retries, and shared logs.")
+st.caption("Made with ❤️, initials, IST time, and honest apologies.")
