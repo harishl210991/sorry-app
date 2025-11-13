@@ -65,7 +65,7 @@ if ok or no:
 st.markdown("---")
 st.subheader("💗 A tiny question just for you...")
 
-secret_input = st.text_input("Enter the word only you and I know 😘:")
+secret_input = st.text_input("Enter the word/name only you and I know 😘:")
 
 SECRET_WORD = "Iniya"  # <<---- change this to your real secret word
 
