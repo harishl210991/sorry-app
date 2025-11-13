@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import time
+from datetime import datetime
 
 # --- Page setup ---
 st.set_page_config(page_title="Sorry ❤️", page_icon="💔", layout="centered")
@@ -26,6 +27,9 @@ messages = [
 if "count" not in st.session_state:
     st.session_state.count = 0
 
+if "log" not in st.session_state:
+    st.session_state.log = []
+
 placeholder = st.empty()
 
 # --- Main UI ---
@@ -43,16 +47,51 @@ if ok or no:
     msg = random.choice(messages)
 
     if ok:
+        st.session_state.log.append(
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} — She clicked YES ❤️"
+        )
         st.balloons()
         st.toast("Yay! Processing infinite forgiveness loop… 😅", icon="🎉")
     else:
+        st.session_state.log.append(
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} — She clicked NO 💔"
+        )
         st.toast("Hmm… attempting another ultra-cute request…", icon="🥺")
 
     with placeholder.container():
         st.markdown(f"<h3 style='text-align:center; color:#ff69b4;'>{msg}</h3>", unsafe_allow_html=True)
         time.sleep(1.5)
+    st.rerun()
 
-    st.rerun()  # (correct replacement for experimental_rerun)
 
-st.markdown("<br><br><center>Made with ❤️ and zero ego for my favorite person.</center>", unsafe_allow_html=True)
+# ----------------------
+# 🔐 HIDDEN ADMIN PANEL
+# ----------------------
 
+st.markdown("---")
+
+# A small discreet button  
+admin_reveal = st.button("🔧 Admin")
+
+if admin_reveal:
+    st.markdown("### 🔐 Enter Admin Password")
+    pwd = st.text_input("Password:", type="password")
+
+    if pwd == "harishlove":  # <-- change password if you want
+        st.success("Admin verified ✔")
+        st.markdown("### 📜 Click Log (Private)")
+
+        if len(st.session_state.log) == 0:
+            st.info("No clicks yet 🤷‍♂️")
+        else:
+            for entry in reversed(st.session_state.log):
+                st.write("•", entry)
+
+    elif pwd:
+        st.error("❌ Wrong password")
+
+else:
+    # Hide everything unless admin clicks the button
+    st.caption("")
+
+st.markdown("<br><center>Made with ❤️, cuteness & admin superpowers.</center>", unsafe_allow_html=True)
